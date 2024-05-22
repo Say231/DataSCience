@@ -1,0 +1,403 @@
+1. //Write a program in python to take input from a file(demo.csv) while user will give the filename as input. Print the record of each student.
+
+import csv
+
+# Function to read and print records from the CSV file
+def print_student_records(filename):
+    try:
+        with open(filename, 'r') as file:
+            # Create a CSV reader object
+            csv_reader = csv.reader(file)
+
+            # Iterate over each row in the CSV file
+            for row in csv_reader:
+                print("Student Record:")
+                print("Name:", row[0])
+                print("Age:", row[1])
+                print("Grade:", row[2])
+                print()  # Print an empty line for better readability
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename (e.g., demo.csv): ")
+
+    # Call the function to print student records
+    print_student_records(filename)
+
+
+2.	Write a python program to take input from a file while user will give the filename as input. Perform the following operations and show the output:
+a)	Read first 10 lines and print it
+
+# Function to read and print the first 10 lines from the file
+def print_first_10_lines(filename):
+    try:
+        with open(filename, 'r') as file:
+            # Read the first 10 lines from the file
+            for i in range(10):
+                line = file.readline()
+                if line:  # Check if line is not empty
+                    print(line.strip())  # Print the line without leading/trailing whitespace
+                else:
+                    break  # Break the loop if end of file is reached
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename: ")
+
+    # Call the function to print the first 10 lines
+    print_first_10_lines(filename)
+
+
+b) //Read the stopwords file and remove stopwords from those lines
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Function to remove stopwords from a line
+def remove_stopwords(line, stopwords_set):
+    words = line.split()
+    filtered_words = [word for word in words if word.lower() not in stopwords_set]
+    return ' '.join(filtered_words)
+
+# Function to read the stopwords file
+def read_stopwords(stopwords_filename):
+    stopwords_set = set()
+    with open(stopwords_filename, 'r') as file:
+        for word in file:
+            stopwords_set.add(word.strip().lower())
+    return stopwords_set
+
+# Function to read lines from the specified file and remove stopwords
+def remove_stopwords_from_file(filename, stopwords_set):
+    try:
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Remove stopwords from the line
+                filtered_line = remove_stopwords(line, stopwords_set)
+                print(filtered_line.strip())  # Print the modified line without leading/trailing whitespace
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read lines from: ")
+    stopwords_filename = input("Enter the stopwords filename: ")
+
+    # Read the stopwords from the stopwords file
+    stopwords_set = read_stopwords(stopwords_filename)
+
+    # Remove stopwords from lines in the specified file and print the modified lines
+    remove_stopwords_from_file(filename, stopwords_set)
+
+
+c) //Display the 10 lines without stopwords
+
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Function to remove stopwords from a line
+def remove_stopwords(line, stopwords_set):
+    words = line.split()
+    filtered_words = [word for word in words if word.lower() not in stopwords_set]
+    return ' '.join(filtered_words)
+
+# Function to read the stopwords file
+def read_stopwords(stopwords_filename):
+    stopwords_set = set()
+    with open(stopwords_filename, 'r') as file:
+        for word in file:
+            stopwords_set.add(word.strip().lower())
+    return stopwords_set
+
+# Function to display the first 10 lines without stopwords
+def display_first_10_lines_without_stopwords(filename, stopwords_set):
+    try:
+        with open(filename, 'r') as file:
+            line_count = 0
+            # Read and process lines from the file
+            for line in file:
+                # Remove stopwords from the line
+                filtered_line = remove_stopwords(line, stopwords_set)
+                # Print the modified line if it's not empty
+                if filtered_line.strip():
+                    print(filtered_line.strip())
+                    line_count += 1
+                    if line_count >= 10:
+                        break
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read lines from: ")
+    stopwords_filename = input("Enter the stopwords filename: ")
+
+    # Read the stopwords from the stopwords file
+    stopwords_set = read_stopwords(stopwords_filename)
+
+    # Display the first 10 lines from the specified file without stopwords
+    display_first_10_lines_without_stopwords(filename, stopwords_set)
+
+d) //Display the distinct words  
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Function to remove stopwords from a line and extract distinct words
+def remove_stopwords_and_get_distinct_words(line, stopwords_set):
+    words = line.split()
+    filtered_words = [word for word in words if word.lower() not in stopwords_set]
+    return set(filtered_words)
+
+# Function to read the stopwords file
+def read_stopwords(stopwords_filename):
+    stopwords_set = set()
+    with open(stopwords_filename, 'r') as file:
+        for word in file:
+            stopwords_set.add(word.strip().lower())
+    return stopwords_set
+
+# Function to display the distinct words from the lines without stopwords
+def display_distinct_words(filename, stopwords_set):
+    try:
+        distinct_words = set()
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Remove stopwords from the line and get distinct words
+                filtered_words = remove_stopwords_and_get_distinct_words(line, stopwords_set)
+                # Update the set of distinct words
+                distinct_words.update(filtered_words)
+        
+        # Print the distinct words
+        print("Distinct words in the file without stopwords:")
+        for word in distinct_words:
+            print(word)
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read lines from: ")
+    stopwords_filename = input("Enter the stopwords filename: ")
+
+    # Read the stopwords from the stopwords file
+    stopwords_set = read_stopwords(stopwords_filename)
+
+    # Display the distinct words from the specified file without stopwords
+    display_distinct_words(filename, stopwords_set)
+
+
+e) //Total word count before and after stopwords removal
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Function to remove stopwords from a line and extract distinct words
+def remove_stopwords_and_get_distinct_words(line, stopwords_set):
+    words = line.split()
+    filtered_words = [word for word in words if word.lower() not in stopwords_set]
+    return set(filtered_words), len(words)
+
+# Function to read the stopwords file
+def read_stopwords(stopwords_filename):
+    stopwords_set = set()
+    with open(stopwords_filename, 'r') as file:
+        for word in file:
+            stopwords_set.add(word.strip().lower())
+    return stopwords_set
+
+# Function to display the total word count before and after stopwords removal
+def display_word_counts(filename, stopwords_set):
+    try:
+        total_words_before = 0
+        total_words_after = 0
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Remove stopwords from the line and get distinct words
+                filtered_words, line_word_count = remove_stopwords_and_get_distinct_words(line, stopwords_set)
+                # Update the total word count before and after stopwords removal
+                total_words_before += line_word_count
+                total_words_after += len(filtered_words)
+        
+        # Print the total word count before and after stopwords removal
+        print("Total word count before stopwords removal:", total_words_before)
+        print("Total word count after stopwords removal:", total_words_after)
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read lines from: ")
+    stopwords_filename = input("Enter the stopwords filename: ")
+
+    # Read the stopwords from the stopwords file
+    stopwords_set = read_stopwords(stopwords_filename)
+
+    # Display the total word count before and after stopwords removal
+    display_word_counts(filename, stopwords_set)
+
+f) //Display the annotation
+
+# Function to display annotations from a file
+def display_annotations(filename):
+    try:
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Split the line into text and annotation
+                parts = line.strip().split(',')
+                if len(parts) == 2:
+                    text, annotation = parts
+                    print("Text:", text.strip())
+                    print("Annotation:", annotation.strip())
+                    print()  # Print an empty line for better readability
+                else:
+                    print("Invalid line format:", line.strip())
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read annotations from: ")
+
+    # Display annotations from the specified file
+    display_annotations(filename)
+
+g) //Display the hash tags
+
+import re
+
+# Function to display hashtags from a file
+def display_hashtags(filename):
+    try:
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Find all hashtags using regular expression
+                hashtags = re.findall(r'#\w+', line)
+                if hashtags:
+                    print("Hashtags:", ", ".join(hashtags))
+                else:
+                    print("No hashtags found in the line.")
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read hashtags from: ")
+
+    # Display hashtags from the specified file
+    display_hashtags(filename)
+
+h) //Display the URLS
+
+import re
+
+# Function to display URLs from a file
+def display_urls(filename):
+    try:
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Find all URLs using regular expression
+                urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', line)
+                if urls:
+                    print("URLs:", ", ".join(urls))
+                else:
+                    print("No URLs found in the line.")
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read URLs from: ")
+
+    # Display URLs from the specified file
+    display_urls(filename)
+
+i)	Apply stemming method and print stemmed version of words without considering stopwords.
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Function to remove stopwords from a line, apply stemming, and extract distinct words
+def remove_stopwords_apply_stemming(line, stopwords_set, stemmer):
+    words = line.split()
+    filtered_words = [word.lower() for word in words if word.lower() not in stopwords_set]
+    stemmed_words = [stemmer.stem(word) for word in filtered_words]
+    return set(stemmed_words)
+
+# Function to read the stopwords file
+def read_stopwords(stopwords_filename):
+    stopwords_set = set()
+    with open(stopwords_filename, 'r') as file:
+        for word in file:
+            stopwords_set.add(word.strip().lower())
+    return stopwords_set
+
+# Function to display the stemmed version of words from the lines without stopwords
+def display_stemmed_words(filename, stopwords_set):
+    try:
+        stemmer = PorterStemmer()
+        distinct_stemmed_words = set()
+        with open(filename, 'r') as file:
+            # Read lines from the file
+            for line in file:
+                # Remove stopwords from the line, apply stemming, and get distinct words
+                stemmed_words = remove_stopwords_apply_stemming(line, stopwords_set, stemmer)
+                # Update the set of distinct stemmed words
+                distinct_stemmed_words.update(stemmed_words)
+        
+        # Print the distinct stemmed words
+        print("Stemmed version of words in the file without stopwords:")
+        for word in distinct_stemmed_words:
+            print(word)
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename to read lines from: ")
+    stopwords_filename = input("Enter the stopwords filename: ")
+
+    # Read the stopwords from the stopwords file
+    stopwords_set = read_stopwords(stopwords_filename)
+
+    # Display the stemmed version of words from the specified file without stopwords
+    display_stemmed_words(filename, stopwords_set)
+
+

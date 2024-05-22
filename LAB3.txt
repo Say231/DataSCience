@@ -1,0 +1,297 @@
+1.	Write a program in python to take input from a file while user will give the filename as input.
+
+# Function to read content from a file
+def read_file_content(filename):
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            print("Content of the file:")
+            print(content)
+    except FileNotFoundError:
+        print("File not found. Please make sure the file name is correct and try again.")
+
+# Main code
+if __name__ == "__main__":
+    # Take input for the filename
+    filename = input("Enter the filename: ")
+
+    # Call the function to read content from the specified file
+    read_file_content(filename)
+
+
+2.//Write a python program to perform the following operations and show the output:
+
+a)//Create a file with where each line consists of stemmed version of words(lowercase) without stop words, URL, punctuation.
+
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import re
+
+def preprocess_text(text):
+  """Preprocesses text by removing stop words, URLs, punctuation, and stemming words.
+
+  Args:
+      text: The text to preprocess.
+
+  Returns:
+      A list of stemmed words (lowercase) without stop words, URLs, or punctuation.
+  """
+  # Lowercase all words
+  text = text.lower()
+
+  # Remove URLs using regular expression
+  text = re.sub(r"http\S+", "", text)
+
+  # Remove punctuation
+  text = re.sub(r"[^\w\s]", "", text)
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in text.split() if word not in stop_words]
+
+  # Stem words using Porter stemmer
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+  return stemmed_words
+
+def create_processed_file(input_file, output_file):
+  """Creates a new file with preprocessed text from the input file.
+
+  Args:
+      input_file: Path to the input file.
+      output_file: Path to the output file.
+  """
+  with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
+    for line in f_in:
+      processed_line = preprocess_text(line.strip())  # Remove trailing newline
+      f_out.write(" ".join(processed_line) + "\n")
+
+if __name__ == "__main__":
+  input_file = "your_input_file.txt"  # Replace with your actual file path
+  output_file = "processed_text.txt"
+  create_processed_file(input_file, output_file)
+  print(f"Preprocessed text written to: {output_file}")
+
+b)	Find synonyms of each distinct words.
+
+import nltk
+from nltk.corpus import stopwords, wordnet
+from nltk.stem import PorterStemmer
+import re
+
+def preprocess_text(text):
+    """Preprocesses text by removing stop words, URLs, punctuation,
+    and performing lemmatization.
+
+    Args:
+        text: The text to preprocess.
+
+    Returns:
+        A list of preprocessed words (lowercase, no stop words, URLs,
+        or punctuation, and lemmatized).
+    """
+
+    # Lowercase all words
+    text = text.lower()
+
+    # Remove URLs using regular expression
+    text = re.sub(r"http\S+", "", text)
+
+    # Remove punctuation
+    text = re.sub(r"[^\w\s]", "", text)
+
+    # Remove stop words
+    stop_words = set(stopwords.words('english'))
+    words = [word for word in text.split() if word not in stop_words]
+
+    # Lemmatize words using WordNetLemmatizer
+    lemmatizer = nltk.WordNetLemmatizer()
+    stemmed_words = [lemmatizer.lemmatize(word) for word in words]
+
+    return stemmed_words
+
+def find_synonyms(preprocessed_words):
+    """Finds synonyms for each distinct word in the preprocessed list.
+
+    Args:
+        preprocessed_words: A list of preprocessed words.
+
+    Returns:
+        A dictionary where keys are distinct preprocessed words and
+        values are lists of their synonyms.
+    """
+
+    synonyms_dict = {}
+    for word in set(preprocessed_words):
+        synonyms = []
+        synsets = wordnet.synsets(word)  # Get synsets for the word
+        for synset in synsets:
+            for lemma in synset.lemmas():
+                synonym = lemma.name()
+                if synonym != word and synonym not in synonyms:  # Avoid duplicates
+                    synonyms.append(synonym)
+        synonyms_dict[word] = synonyms
+
+    return synonyms_dict
+
+def main():
+    nltk.download('punkt', quiet=True)  # Download NLTK punkt tokenizer (if not already downloaded)
+    nltk.download('wordnet', quiet=True)  # Download NLTK WordNet (if not already downloaded)
+    input_file = "your_input_file.txt"  # Replace with your actual file path
+    output_file = "processed_text.txt"
+
+    with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
+        for line in f_in:
+            processed_line = preprocess_text(line.strip())
+            f_out.write(" ".join(processed_line) + "\n")
+
+    # Read preprocessed text from output file (optional, for demonstration)
+    with open(output_file, 'r') as f:
+        preprocessed_text = f.read().splitlines()
+
+    # Find synonyms for each distinct word
+    synonyms_dict = find_synonyms(preprocessed_text)
+
+    print("Original words and their synonyms:")
+    for word, synonyms in synonyms_dict.items():
+        print(f"{word}: {', '.join(synonyms)}")
+
+if __name__ == "__main__":
+    main()
+
+
+c)	Identify the frequency of each hash tag. Consider a dictionary to store the hashtags and its frequency. Sort the dictionary based on frequency values. Display highest occurred hashtag.
+
+from collections import Counter
+
+def find_hashtag_frequencies(text):
+  """
+  Finds the frequency of each hashtag in a given text.
+
+  Args:
+      text: The text containing hashtags.
+
+  Returns:
+      A dictionary where keys are hashtags (lowercase, without #) and
+      values are their frequencies.
+  """
+  hashtags = []
+  # Find all words starting with '#' (case-insensitive)
+  for word in re.findall(r"#(\w+)", text, flags=re.IGNORECASE):
+    hashtags.append(word.lower())  # Convert to lowercase
+
+  # Count hashtag frequencies using Counter
+  hashtag_counts = Counter(hashtags)
+
+  return hashtag_counts
+
+def main():
+  # Example text (replace with your actual text)
+  text = """This is a tweet with #SomeHashtags and #moreHashtags. 
+  #AnotherHashtag is here and so is #ThisOne. Let's see what the most popular one is!"""
+
+  # Find hashtag frequencies
+  hashtag_counts = find_hashtag_frequencies(text)
+
+  # Sort hashtags by frequency (descending order)
+  sorted_hashtags = sorted(hashtag_counts.items(), key=lambda item: item[1], reverse=True)
+
+  # Display the highest occurred hashtag and its frequency
+  if sorted_hashtags:
+    most_popular_hashtag, frequency = sorted_hashtags[0]
+    print(f"Most popular hashtag: #{most_popular_hashtag} (used {frequency} times)")
+  else:
+    print("No hashtags found in the text.")
+
+if __name__ == "__main__":
+  main()
+
+
+d)	Identify duplicate strings.
+
+def find_duplicate_strings(strings):
+  """
+  Finds duplicate strings in a list using a set.
+
+  Args:
+      strings: A list of strings.
+
+  Returns:
+      A list of duplicate strings.
+  """
+  seen_strings = set()
+  duplicates = []
+  for string in strings:
+    if string in seen_strings:
+      duplicates.append(string)
+    else:
+      seen_strings.add(string)
+  return duplicates
+
+# Example list of strings
+strings = ["apple", "banana", "cherry", "apple", "orange", "banana"]
+
+# Find duplicate strings
+duplicates = find_duplicate_strings(strings)
+
+if duplicates:
+  print("Duplicate strings:", ", ".join(duplicates))
+else:
+  print("No duplicate strings found.")
+
+e)	Represent the document as Text Vectorization considering word presence as 1 and absence as 0. Each row represents the row of the file and column represents all the distinct words
+
+from collections import Counter
+from nltk.corpus import stopwords
+
+def create_document_term_matrix(documents):
+  """
+  Creates a document-term matrix representing word presence in documents.
+
+  Args:
+      documents: A list of documents (strings).
+
+  Returns:
+      A dictionary where keys are words and values are lists representing
+      word presence (1) or absence (0) in each document.
+  """
+
+  # Preprocess documents (remove stop words, lowercase)
+  stop_words = set(stopwords.words('english'))
+  processed_docs = [[word.lower() for word in doc.split() if word not in stop_words] for doc in documents]
+
+  # Create a vocabulary of distinct words
+  vocabulary = set()
+  for doc in processed_docs:
+    vocabulary.update(doc)
+
+  # Create the document-term matrix
+  document_term_matrix = {}
+  for word in vocabulary:
+    document_term_matrix[word] = []
+    for doc in processed_docs:
+      document_term_matrix[word].append(1 if word in doc else 0)
+
+  return document_term_matrix
+
+def main():
+  # Example documents (replace with your actual data)
+  documents = [
+      "This is the first document with some words.",
+      "This is the second document with some overlapping words.",
+      "This document has some unique words as well."
+  ]
+
+  # Create document-term matrix
+  document_term_matrix = create_document_term_matrix(documents)
+
+  # Print the matrix (consider using pandas for a better representation)
+  print("Document-Term Matrix (word presence: 1, absence: 0):")
+  for word, presence_list in document_term_matrix.items():
+    print(f"{word}: {presence_list}")
+
+if __name__ == "__main__":
+  main()
+
+

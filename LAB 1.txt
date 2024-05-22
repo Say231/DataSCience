@@ -1,0 +1,176 @@
+//.Write a program in python to take input of an integer, float and string. Demonstrate the type of all the variables.
+
+# Take input for an integer
+integer_input = int(input("Enter an integer: "))
+
+# Take input for a float
+float_input = float(input("Enter a float: "))
+
+# Take input for a string
+string_input = input("Enter a string: ")
+
+# Print the types of the variables
+print("Type of integer_input:", type(integer_input))
+print("Type of float_input:", type(float_input))
+print("Type of string_input:", type(string_input))
+
+
+2 //Write a python program to take input a string. Perform the following operations on that string and show the output:
+a. //Check Lower case
+
+# Take input for a string
+input_string = input("Enter a string: ")
+
+# Check if the string contains only lowercase characters
+if input_string.islower():
+    print("The string contains only lowercase characters.")
+else:
+    print("The string does not contain only lowercase characters.")
+
+b. //Convert into Lower case
+
+# Take input for a string
+input_string = input("Enter a string: ")
+
+# Convert the string to lowercase
+lowercase_string = input_string.lower()
+
+# Print the lowercase string
+print("Lowercase string:", lowercase_string)
+
+c. //Convert into upper case
+
+# Take input for a string
+input_string = input("Enter a string: ")
+
+# Convert the string to uppercase
+uppercase_string = input_string.upper()
+
+# Print the uppercase string
+print("Uppercase string:", uppercase_string)
+
+d. //Display tokenized words.
+
+# Take input for a string
+input_string = input("Enter a string: ")
+
+# Tokenize the input string into words
+tokenized_words = input_string.split()
+
+# Print the tokenized words
+print("Tokenized words:", tokenized_words)
+
+e. //Display distinct words in the paragraph
+
+# Take input for a paragraph
+input_paragraph = input("Enter a paragraph: ")
+
+# Tokenize the input paragraph into words
+words = input_paragraph.split()
+
+# Create a set to store distinct words
+distinct_words = set(words)
+
+# Print the distinct words
+print("Distinct words in the paragraph:")
+for word in distinct_words:
+    print(word)
+
+f. //Count total number of words
+
+# Take input for a paragraph
+input_paragraph = input("Enter a paragraph: ")
+
+# Tokenize the input paragraph into words
+words = input_paragraph.split()
+
+# Count the total number of words
+total_words = len(words)
+
+# Print the total number of words
+print("Total number of words in the paragraph:", total_words)
+
+g. //Count distinct number of words
+
+# Take input for a paragraph
+input_paragraph = input("Enter a paragraph: ")
+
+# Tokenize the input paragraph into words
+words = input_paragraph.split()
+
+# Create a set to store distinct words
+distinct_words = set(words)
+
+# Count the distinct number of words
+distinct_word_count = len(distinct_words)
+
+# Print the distinct number of words
+print("Distinct number of words in the paragraph:", distinct_word_count)
+
+h. //Print stopwords
+
+bash
+
+pip install nltk
+Then, you can download the stopwords corpus by running the following Python script once:
+
+import nltk
+nltk.download('stopwords')
+Once NLTK and the stopwords corpus are installed and downloaded, you can print the stopwords using the following code:
+
+-------------------------------------CODE-----------------------
+from nltk.corpus import stopwords
+
+# Get the list of stopwords for English
+english_stopwords = set(stopwords.words('english'))
+
+# Print the stopwords
+print("Stopwords in English:")
+print(english_stopwords)
+
+i. //Count the number of stopwords
+
+import nltk
+from nltk.corpus import stopwords
+
+# Download stopwords corpus if not already downloaded
+nltk.download('stopwords')
+
+# Take input for a paragraph
+input_paragraph = input("Enter a paragraph: ")
+
+# Tokenize the input paragraph into words
+words = input_paragraph.split()
+
+# Get the list of stopwords for English
+english_stopwords = set(stopwords.words('english'))
+
+# Count the number of stopwords
+stopword_count = 0
+for word in words:
+    if word.lower() in english_stopwords:
+        stopword_count += 1
+
+# Print the number of stopwords
+print("Number of stopwords in the paragraph:", stopword_count)
+
+
+j.// Display first and last 3 characters of the string in concatenated fashion
+
+# Take input for a string
+input_string = input("Enter a string: ")
+
+# Extract the first three characters
+first_three = input_string[:3]
+
+# Extract the last three characters
+last_three = input_string[-3:]
+
+# Concatenate the first and last three characters
+concatenated = first_three + last_three
+
+# Print the concatenated string
+print("Concatenated string:", concatenated)
+
+
+

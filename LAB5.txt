@@ -1,0 +1,414 @@
+1.	Write a python program to perform the following operations and show the output:
+a.	Pre-process the data removing URL, hashtag, URL, punctuation, user annotation, stopwords.
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer  # Consider lemmatization if context matters
+import re
+
+def preprocess_text(text):
+  """Preprocesses text by removing URLs, hashtags, punctuation, user annotations,
+  and stop words, and performs stemming (consider lemmatization for context-aware).
+
+  Args:
+      text: The text to preprocess.
+
+  Returns:
+      A list of preprocessed words (lowercase, no URLs, hashtags, punctuation,
+      user annotations, or stop words, stemmed).
+  """
+
+  # Lowercase all words
+  text = text.lower()
+
+  # Remove URLs using regular expression
+  text = re.sub(r"http\S+", "", text)
+
+  # Remove hashtags (consider using dedicated hashtag detection if needed)
+  text = re.sub(r"#\S+", "", text)
+
+  # Remove punctuation
+  text = re.sub(r"[^\w\s]", "", text)
+
+  # Remove user annotations (consider a more specific pattern for your use case)
+  text = re.sub(r"@\S+", "", text)
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in text.split() if word not in stop_words]
+
+  # Stem words using PorterStemmer (consider lemmatization for context preservation)
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+  return stemmed_words
+
+def create_processed_file(input_file, output_file):
+  """Creates a new file with preprocessed text from the input file.
+
+  Args:
+      input_file: Path to the input file.
+      output_file: Path to the output file.
+  """
+
+  with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
+    for line in f_in:
+      processed_line = preprocess_text(line.strip())  # Remove trailing newline
+      f_out.write(" ".join(processed_line) + "\n")
+
+if __name__ == "__main__":
+  nltk.download('punkt', quiet=True)  # Download NLTK punkt tokenizer (if not already downloaded)
+  nltk.download('stopwords', quiet=True)  # Download NLTK stopwords corpus (if not already downloaded)
+  input_file = "your_input_file.txt"  # Replace with your actual file path
+  output_file = "processed_text.txt"
+  create_processed_file(input_file, output_file)
+  print(f"Preprocessed text written to: {output_file}")
+
+
+b. //Apply the method stemming.
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in text.split() if word not in stop_words]
+
+  # Stem words using PorterStemmer (consider lemmatization for context preservation)
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+c. //Represent the text data into vector format.
+
+from collections import Counter
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import re
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+def preprocess_text(text):
+    """Preprocesses text by removing URLs, hashtags, punctuation, user annotations,
+    and stop words, and performs stemming.
+
+    Args:
+        text: The text to preprocess.
+
+    Returns:
+        A list of preprocessed words (lowercase, no URLs, hashtags, punctuation,
+        user annotations, or stop words, stemmed).
+    """
+
+    # Lowercase all words
+    text = text.lower()
+
+    # Remove URLs using regular expression
+    text = re.sub(r"http\S+", "", text)
+
+    # Remove hashtags (consider using dedicated hashtag detection if needed)
+    text = re.sub(r"#\S+", "", text)
+
+    # Remove punctuation
+    text = re.sub(r"[^\w\s]", "", text)
+
+    # Remove user annotations (consider a more specific pattern for your use case)
+    text = re.sub(r"@\S+", "", text)
+
+    # Remove stop words
+    stop_words = set(stopwords.words('english'))
+    words = [word for word in text.split() if word not in stop_words]
+
+    # Stem words using PorterStemmer (consider lemmatization for context preservation)
+    stemmer = PorterStemmer()
+    stemmed_words = [stemmer.stem(word) for word in words]
+
+    return stemmed_words
+
+def create_tfidf_vectorizer(documents):
+    """Creates a TF-IDF vectorizer from a list of preprocessed documents.
+
+    Args:
+        documents: A list of preprocessed documents (lists of words).
+
+    Returns:
+        A TF-IDF vectorizer object.
+    """
+
+    vectorizer = TfidfVectorizer(max_df=0.8, min_df=2)  # Adjust parameters as needed
+    vectorizer.fit_transform(documents)
+    return vectorizer
+
+def main():
+    nltk.download('punkt', quiet=True)  # Download NLTK punkt tokenizer (if not already downloaded)
+    nltk.download('stopwords', quiet=True)  # Download NLTK stopwords corpus (if not already downloaded)
+
+    # Example documents (replace with your actual data)
+    documents = [
+        "This is the first document with some words about data science.",
+        "This is the second document with some overlapping words but focuses on machine learning.",
+        "This document has some unique words related to natural language processing."
+    ]
+
+    # Preprocess documents
+    preprocessed_documents = [preprocess_text(doc) for doc in documents]
+
+    # Create TF-IDF vectorizer
+    vectorizer = create_tfidf_vectorizer(preprocessed_documents)
+
+    # Get the vocabulary (feature names)
+    vocabulary = vectorizer.get_feature_names_out()
+
+    # Transform documents into TF-IDF vectors (consider using pandas for a better representation)
+    tfidf_matrix = vectorizer.transform(preprocessed_documents)
+
+    print("TF-IDF Matrix:")
+    for i, doc in enumerate(documents):
+        print(f"Document {i+1}:")
+        for word, score in zip(vocabulary, tfidf_matrix[i].toarray()[0]):
+            print(f"\t- {word}: {score:.4f}")  # Format score with 4 decimal places
+
+if __name__ == "__main__":
+    main()
+
+
+d.	Create a directed graph considering each data row as nodes of the graph.
+
+from collections import defaultdict
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+from nltk.similarity.cosine import cosine_similarity
+
+def preprocess_text(text):
+  """Preprocesses text by removing stop words, performing stemming, and tokenization.
+
+  Args:
+      text: The text to preprocess.
+
+  Returns:
+      A list of preprocessed words (lowercase, no stop words, stemmed, and tokenized).
+  """
+
+  # Lowercase all words
+  text = text.lower()
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in word_tokenize(text) if word not in stop_words]
+
+  # Stem words using PorterStemmer (consider lemmatization for context preservation)
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+  return stemmed_words
+
+def create_directed_graph(data, similarity_threshold=0.5):
+  """
+  Creates a directed graph considering each data row as a node and linking
+  similar rows based on text similarity using cosine similarity.
+
+  Args:
+      data: A list of data rows (strings).
+      similarity_threshold: The minimum cosine similarity score for a connection (default 0.5).
+
+  Returns:
+      A dictionary representing the directed graph, where keys are data rows (strings)
+      and values are lists of similar data rows (strings).
+  """
+
+  graph = defaultdict(list)
+  preprocessed_data = [preprocess_text(row) for row in data]
+
+  for i, row1 in enumerate(data):
+    for j, row2 in enumerate(data):
+      if i != j:  # Avoid self-connections
+        similarity = cosine_similarity(preprocessed_data[i], preprocessed_data[j])
+        if similarity >= similarity_threshold:
+          graph[row1].append(row2)
+
+  return graph
+
+def main():
+  # Example data (replace with your actual data)
+  data = [
+      "This is a document about data science concepts.",
+      "Machine learning algorithms are used in data science.",
+      "Natural language processing is another field related to data science.",
+      "This document talks about applications of data science in healthcare.",
+  ]
+
+  # Create directed graph (adjust similarity_threshold as needed)
+  graph = create_directed_graph(data, similarity_threshold=0.6)
+
+  print("Directed Graph:")
+  for node, neighbors in graph.items():
+    print(f"{node}: {', '.join(neighbors)}")
+
+if __name__ == "__main__":
+  main()
+
+e.	Create edge between any two nodes if data rows have more than 1 common words at least.
+
+from collections import defaultdict
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+
+def preprocess_text(text):
+  """Preprocesses text by removing stop words, performing stemming, and tokenization.
+
+  Args:
+      text: The text to preprocess.
+
+  Returns:
+      A set of preprocessed words (lowercase, no stop words, stemmed).
+  """
+
+  # Lowercase all words
+  text = text.lower()
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in word_tokenize(text) if word not in stop_words]
+
+  # Stem words using PorterStemmer (consider lemmatization for context preservation)
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+  return set(stemmed_words)  # Return set for efficient common word counting
+
+def create_directed_graph(data, min_common_words=2):
+  """
+  Creates a directed graph considering each data row as a node and linking
+  similar rows based on the number of common words (at least a certain threshold).
+
+  Args:
+      data: A list of data rows (strings).
+      min_common_words: The minimum number of common words for a connection (default 2).
+
+  Returns:
+      A dictionary representing the directed graph, where keys are data rows (strings)
+      and values are lists of similar data rows (strings).
+  """
+
+  graph = defaultdict(list)
+  preprocessed_data = [preprocess_text(row) for row in data]
+
+  for i, row1 in enumerate(data):
+    for j, row2 in enumerate(data):
+      if i != j:  # Avoid self-connections
+        common_words = len(preprocessed_data[i] & preprocessed_data[j])
+        if common_words >= min_common_words:
+          graph[row1].append(row2)
+
+  return graph
+
+def main():
+  # Example data (replace with your actual data)
+  data = [
+      "This is a document about data science concepts.",
+      "Machine learning algorithms are used in data science.",
+      "Natural language processing is another field related to data science.",
+      "This document talks about applications of data science in healthcare.",
+      "Another example document about data science and machine learning."
+  ]
+
+  # Create directed graph (adjust min_common_words as needed)
+  graph = create_directed_graph(data, min_common_words=2)
+
+  print("Directed Graph:")
+  for node, neighbors in graph.items():
+    print(f"{node}: {', '.join(neighbors)}")
+
+if __name__ == "__main__":
+  main()
+
+
+f.	Compute the weight of the edges between the two nodes considering the distances(Euclidean /manhattan distance)/similarity(cosine similarity) between every pare of node.
+
+from collections import defaultdict
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+from nltk.similarity.cosine import cosine_similarity
+from scipy.spatial.distance import euclidean, manhattan
+
+def preprocess_text(text):
+  """Preprocesses text by removing stop words, performing stemming, and tokenization.
+
+  Args:
+      text: The text to preprocess.
+
+  Returns:
+      A list of preprocessed words (lowercase, no stop words, stemmed).
+  """
+
+  # Lowercase all words
+  text = text.lower()
+
+  # Remove stop words
+  stop_words = set(stopwords.words('english'))
+  words = [word for word in word_tokenize(text) if word not in stop_words]
+
+  # Stem words using PorterStemmer (consider lemmatization for context preservation)
+  stemmer = PorterStemmer()
+  stemmed_words = [stemmer.stem(word) for word in words]
+
+  return stemmed_words
+
+def create_weighted_graph(data, distance_metric="cosine"):
+  """
+  Creates a weighted directed graph considering each data row as a node and linking
+  similar rows based on cosine similarity. The weight of the edge is based on the
+  chosen distance metric.
+
+  Args:
+      data: A list of data rows (strings).
+      distance_metric: The distance metric to use for weight calculation ("cosine",
+                        "euclidean", or "manhattan"). Default is "cosine".
+
+  Returns:
+      A dictionary representing the weighted directed graph, where keys are data rows
+      (strings) and values are dictionaries of connected nodes (strings) and their weights.
+  """
+
+  graph = defaultdict(dict)
+  preprocessed_data = [preprocess_text(row) for row in data]
+
+  for i, row1 in enumerate(data):
+    for j, row2 in enumerate(data):
+      if i != j:  # Avoid self-connections
+        # Calculate similarity or distance based on the chosen metric
+        if distance_metric == "cosine":
+          similarity = cosine_similarity(preprocessed_data[i], preprocessed_data[j])
+          weight = 1 - similarity  # Higher similarity, lower weight (closer)
+        elif distance_metric == "euclidean":
+          weight = euclidean(preprocessed_data[i], preprocessed_data[j])
+        elif distance_metric == "manhattan":
+          weight = manhattan(preprocessed_data[i], preprocessed_data[j])
+        else:
+          raise ValueError(f"Invalid distance metric: {distance_metric}")
+
+        graph[row1][row2] = weight
+
+  return graph
+
+def main():
+  # Example data (replace with your actual data)
+  data = [
+      "This is a document about data science concepts.",
+      "Machine learning algorithms are used in data science.",
+      "Natural language processing is another field related to data science.",
+      "This document talks about applications of data science in healthcare.",
+      "Another example document about data science and machine learning."
+  ]
+
+  # Create weighted directed graph (adjust distance_metric as needed)
+  graph = create_weighted_graph(data, distance_metric="cosine")
+
+  print("Weighted Directed Graph:")
+  for node, neighbors in graph.items():
+    print(f"{node}:")
+    for neighbor, weight in neighbors.items():
+      print(f"\t- {neighbor}: {weight:.4f}")  # Format weight with 4 decimal places
+
+if __name__ == "__main__":
+  main()
+ 
